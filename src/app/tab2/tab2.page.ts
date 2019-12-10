@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DeviceManagerService } from '../device-manager.service';
 
 @Component({
   selector: 'app-tab2',
@@ -7,6 +8,12 @@ import { Component } from '@angular/core';
 })
 export class Tab2Page {
 
-  constructor() {}
+  constructor(public deviceManager: DeviceManagerService) {
+
+  }
+
+  onClick() {
+    this.deviceManager.debugCommandAttach("LED");
+  }
 
 }
