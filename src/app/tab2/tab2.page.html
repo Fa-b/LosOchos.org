@@ -5,8 +5,15 @@
     </ion-title>
   </ion-toolbar>
   <ion-item>
-    <button ion-button outline (click)="onClick()">Attach Device</button>
+    <button ion-button outline (click)="onAttach()">Attach Device</button>
   </ion-item>
 </ion-header>
 
-<ion-content></ion-content>
+<ion-content>
+  <div class="container">
+    <app-light *ngFor="let device of deviceList"
+    [ident]="device.id" [name]="device.name" [rgb]="device.rgb"
+    [brightness]="device.brightness" (detach)="onDetach($event)"></app-light>
+</div>
+
+</ion-content>

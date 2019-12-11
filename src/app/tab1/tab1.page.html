@@ -7,28 +7,10 @@
 </ion-header>
 
 <ion-content>
-    <!--<ion-card class="welcome-card">
-      <img src="/assets/shapes.svg" alt="" />
-      <ion-card-header>
-        <ion-card-subtitle>Get Started</ion-card-subtitle>
-        <ion-card-title>Welcome to Ionic</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p>Now that your app has been created, you'll want to start building out features and components. Check out some of the resources below for next steps.</p>
-      </ion-card-content>
-    </ion-card>-->
     <ion-list lines="none">
       <ion-list-header>
-        <ion-item>
-            <button ion-button outline item-end icon-start (click)="onClick()">
-                Add Device
-            </button>
-        </ion-item>
       </ion-list-header>
         
-      <!-- [..] : für inputs also von hier da rüber und ( .. ) für rückgaben
-            [(..)] für beides-->
-        <app-light [value]="iterator" (valueChange)="newValue($event)" *ngFor="let element of arrayTest"></app-light>
 
     </ion-list>
 </ion-content>

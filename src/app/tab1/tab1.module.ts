@@ -4,7 +4,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Tab1Page } from './tab1.page';
-import { LightComponent } from '../light/light.component';
 
 @NgModule({
   imports: [
@@ -13,12 +12,8 @@ import { LightComponent } from '../light/light.component';
     FormsModule,
     RouterModule.forChild([{ path: '', component: Tab1Page }])
   ],
-  entryComponents: [
-    LightComponent
-  ],
   declarations: [
-    Tab1Page,
-    LightComponent
-]
+    Tab1Page
+  ]
 })
 export class Tab1PageModule {}

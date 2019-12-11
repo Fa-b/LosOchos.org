@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { ILightDevice } from '../devices';
 
 @Component({
   selector: 'app-light',
@@ -6,21 +7,20 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./light.component.scss'],
 })
 export class LightComponent implements OnInit {
-  @Input() value:number;
-  @Output() valueChange: EventEmitter<number> = new EventEmitter<number>();
-  private name: string = "LED ";
+  @Input() id:string;
+  @Input() name:string;
+  @Input() rgb:boolean;
+  @Input() brightness:number;
+  @Output() detach: EventEmitter<string> = new EventEmitter<string>();
   constructor() {
 
   }
 
-  // constructor wird schon vorher aufgerufen glaube ich
   ngOnInit() {
 
   }
 
   onClick() {
-    this.value++;
-
-    this.valueChange.emit(this.value);
+    this.detach.emit(this.id);
   }
 }
