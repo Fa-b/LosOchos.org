@@ -1,22 +1,21 @@
 import { Injectable } from '@angular/core';
 import { WebsocketService } from './websocket.service';
-import { ILightDevice } from './devices';
+import { IDevice } from './devices';
 import { Dictionary } from "lodash";
+import { Observable } from 'rxjs';
 
-export class LightDevice implements ILightDevice {
+export class Device implements IDevice {
   type: string;
   name: string;
   id: string;
-  rgb: boolean;
-  brightness: number;
-  constructor(type: string, name: string, id: string) {
+  constructor(id: string, type: string, name?: string) {
+    this.id = id;
     this.type = type;
     this.name = name;
-    this.id = id;
   }
 
-  static instanceOf(object: any): object is ILightDevice {
-    return object.type === "Light";
+  static hasInstance(object: any): object is Device {
+    return object.hasOwnProperty("id") && object.hasOwnProperty("type");
   }
 }
 
@@ -27,48 +26,77 @@ export class DeviceManagerService {
   deviceDict: Dictionary<string>
   constructor(public socket: WebsocketService) {
     this.deviceDict = [];
-    this.socket.get('attach')
-      .subscribe(
-        (data) => {
-          if(data.hasOwnProperty('id') && data.hasOwnProperty('type')) {
-            this.deviceDict[data.id] = data.type;
-          }
-        },
-        (err) => {
-          console.log('Error during device attachment: ', err, Date.now());
-        },
-        () => {
-          console.log('Unsubscribed from device attachments', Date.now());
-        }
-      );
 
     console.log('DeviceManager Service Initialized');
   }
 
+  private deviceAttachment(): Observable<any> {
+    return Observable.create((observer) => {
+      this.socket.get('attach')
+        .subscribe(
+          (data) => {
+            if(Device.hasInstance(data)) {
+              // Add new Device to dictionary
+              this.deviceDict[data.id] = data.type;
+              // Notify subscribers
+              observer.next(data);
+            }
+          },
+          (err) => {
+            console.error('Error during device attachment: ', err, Date.now());
+          },
+          () => {
+            console.warn('Unsubscribed from device attachments', Date.now());
+          }
+        );
+      });
+  }
+
+  private deviceDetachment(): Observable<any> {
+    return Observable.create((observer) => {
+      this.socket.get('detach')
+        .subscribe(
+          (data) => {
+            if(data.hasOwnProperty('id')) {
+              let type = this.deviceDict[data.id];
+              // Fetch type and remove Device from dictionary
+              delete this.deviceDict[data.id];
+              // Notify subscribers
+              observer.next({ id: data.id, type: type });
+            }
+          },
+          (err) => {
+            console.error('Error during device detachment: ', err, Date.now());
+          },
+          () => {
+            console.warn('Unsubscribed from device detachments', Date.now());
+          }
+        );
+      });
+  }
+
   on(event: string | symbol, listener: (...args: any[]) => void) {
     if(event == 'lightAttach') {
-      this.socket.get('attach')
+      this.deviceAttachment()
+        .subscribe(
+          (data) => {
+            if(data.type === "Light") {
+              console.log("LighDevice attached");
+              listener(data);
+            }
+          },
+          () => {
+            console.warn('Unsubscribed from LightDevice attach', Date.now());
+          }
+        );
+    } else if(event == 'lightDetach') {
+      this.deviceDetachment()
       .subscribe(
         (data) => {
-          if(LightDevice.instanceOf(data)) {
-            console.log("LighDevice attached");
+          if(data.type === "Light") {
+            console.log("LighDevice detached");
             listener(data);
           }
-        },
-        () => {
-          console.log('Unsubscribed from LightDevice attach', Date.now());
-        }
-      );
-    } else if(event == 'lightDetach') {
-      this.socket.get('detach')
-      .subscribe(
-        (data) => {
-          if(data.hasOwnProperty('id')) {
-            if(this.deviceDict[data.id]) {
-              listener(data.id);
-            }
-          }
-          
         },
         () => {
           console.log('Unsubscribed from LightDevice detach', Date.now());
@@ -82,7 +110,6 @@ export class DeviceManagerService {
   }
 
   debugCommandDetach(value) {
-    console.log(value);
     this.socket.send("debugCommandDetach", {id: value});
   }
 }

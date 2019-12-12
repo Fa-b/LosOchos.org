@@ -1,11 +1,11 @@
 
-export interface IDevices {
-    type: string;
-    name: string;
+export interface IDevice {
     id: string;
+    type: string;
+    name?: string;
 }
 
-export interface ILightDevice extends IDevices {
+export interface ILightDevice extends IDevice {
     rgb: boolean;
     brightness: number;
 }

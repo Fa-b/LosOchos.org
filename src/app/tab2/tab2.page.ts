@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DeviceManagerService, LightDevice } from '../device-manager.service';
+import { DeviceManagerService, Device } from '../device-manager.service';
 
 @Component({
   selector: 'app-tab2',
@@ -7,22 +7,26 @@ import { DeviceManagerService, LightDevice } from '../device-manager.service';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page {
-  deviceList: Array<LightDevice>;
+  deviceList: Array<Device>;
   constructor(public deviceManager: DeviceManagerService) {
     this.deviceList = [];
+
     deviceManager.on('lightAttach', (device) => {
+      // Add device entry to list
       this.deviceList.push(device);
     });
 
-    deviceManager.on('lightDetach', (id) => {
-
-      let deviceIndex = this.deviceList.findIndex(entry => entry.id === id);
+    deviceManager.on('lightDetach', (device) => {
+      // find matching entry in list and remove from list
+      let deviceIndex = this.deviceList.findIndex(entry => entry.id === device.id);
       if(deviceIndex >= 0) {
         this.deviceList.splice(deviceIndex, 1);
       }
     });
   }
 
+
+  // Debug commands
   onAttach() {
     this.deviceManager.debugCommandAttach("LED");
   }
