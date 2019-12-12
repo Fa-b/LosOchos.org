@@ -1,10 +1,43 @@
-<ion-item >
-    <button ion-button outline item-end (click)="onClick()">
-        detach
-    </button>
-       <ion-label>
-        {{device.name}} {{device.id}}
-      </ion-label>
-      
-</ion-item>
+<ion-card>
+        <ion-fab vertical="top" horizontal="end" slot="fixed">
+                <ion-fab-button>
+                  <ion-icon name="settings"></ion-icon>
+                </ion-fab-button>
+                <ion-fab-list side="start">
+                  <ion-fab-button><ion-icon name="logo-vimeo"></ion-icon></ion-fab-button>
+                </ion-fab-list>
+              </ion-fab>
+    <ion-card-header>
+        <ion-card-subtitle>{{device.id}}</ion-card-subtitle>
+        
+        <ion-item lines="none">
+                <ion-card-title>{{device.name}}</ion-card-title>
+            <!--<ion-label slot="end">
+                {{device.on_state ? "On" : "Off"}}
+            </ion-label>-->
+            <ion-toggle slot="start" [(ngModel)]="device.on_state" checked="false"></ion-toggle>
+        </ion-item>
+        
+    </ion-card-header>
 
+    <ion-list>
+
+
+        <ion-item lines="none">
+            <ion-range color="{{device.on_state ? 'primary' : 'medium'}}" pin="true" (ionChange)="onBrightnessChange($event)" [(ngModel)]="device.brightness">
+                <ion-icon slot="start" color="medium" size="small" name="sunny"></ion-icon>
+                <ion-icon slot="end" name="sunny"></ion-icon>
+            </ion-range>
+        </ion-item>
+
+        <ion-item lines="none">
+            <ion-icon name='flask' item-start></ion-icon>
+            <ion-button fill="outline" (click)="onClick()">
+                Detach
+            </ion-button>
+            <ion-note item-end>
+                Remove Device from List
+            </ion-note>
+        </ion-item>
+    </ion-list>
+</ion-card>
