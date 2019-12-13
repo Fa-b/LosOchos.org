@@ -33,8 +33,7 @@ export class LightComponent implements OnInit {
     }, 0);
   }
   @Output() detach: EventEmitter<string> = new EventEmitter<string>();
-  rgb: boolean;
-  brightness: number;
+  @Output() change: EventEmitter<Device> = new EventEmitter<Device>();
   constructor(private _ref: ChangeDetectorRef) {
 
   }
@@ -44,10 +43,15 @@ export class LightComponent implements OnInit {
   }
 
   onClick() {
-    this.detach.emit(this.device.id);
+    this.detach.emit(this._device.id);
+  }
+
+  onStateChange($event) {
+    this.change.emit(this._device);
   }
 
   onBrightnessChange(event) {
     this.device.on_state = true;
+    this.change.emit(this._device);
   }
 }

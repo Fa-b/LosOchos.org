@@ -8,14 +8,14 @@
                 </ion-fab-list>
               </ion-fab>
     <ion-card-header>
-        <ion-card-subtitle>{{device.id}}</ion-card-subtitle>
+        <ion-card-subtitle>{{_device.id}}</ion-card-subtitle>
         
         <ion-item lines="none">
-                <ion-card-title>{{device.name}}</ion-card-title>
+                <ion-card-title>{{_device.name}}</ion-card-title>
             <!--<ion-label slot="end">
                 {{device.on_state ? "On" : "Off"}}
             </ion-label>-->
-            <ion-toggle slot="start" [(ngModel)]="device.on_state"></ion-toggle>
+            <ion-toggle slot="start" [(ngModel)]="_device.on_state" (ionChange)="onStateChange($event)"></ion-toggle>
         </ion-item>
         
     </ion-card-header>
@@ -24,7 +24,7 @@
 
 
         <ion-item lines="none">
-            <ion-range color="{{device.on_state ? 'primary' : 'medium'}}" pin="true" (ionChange)="onBrightnessChange($event)" [(ngModel)]="device.brightness">
+            <ion-range color="{{_device.on_state ? 'primary' : 'medium'}}" pin="true" (ionChange)="onBrightnessChange($event)" [(ngModel)]="_device.brightness">
                 <ion-icon slot="start" color="medium" size="small" name="sunny"></ion-icon>
                 <ion-icon slot="end" name="sunny"></ion-icon>
             </ion-range>

@@ -25,7 +25,6 @@ export class Tab2Page {
     });
   }
 
-
   // Debug commands
   onAttach() {
     this.deviceManager.debugCommandAttach("LED");
@@ -33,6 +32,10 @@ export class Tab2Page {
 
   onDetach(id) {
     this.deviceManager.debugCommandDetach(id);
+  }
+
+  onChange(device) {
+    this.deviceManager.set(device);
   }
 
 }
