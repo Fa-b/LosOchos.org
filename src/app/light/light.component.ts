@@ -26,22 +26,21 @@ export class LightComponent implements OnInit {
     return this._device;
   }
   set device(d: LightDevice){
-    console.log("setting instance")
-    console.log(d);
-    this._device = d;
-    
+    // Official bug fix see GitHub:
+    // https://github.com/ionic-team/ionic/issues/17830
+    setTimeout(() => {
+      this._device = d;
+    }, 0);
   }
   @Output() detach: EventEmitter<string> = new EventEmitter<string>();
   rgb: boolean;
   brightness: number;
   constructor(private _ref: ChangeDetectorRef) {
-    console.log("constructing component")
-    console.log(this._device);
+
   }
 
   ngOnInit() {
-    console.log("ng init")
-    console.log(this._device);
+
   }
 
   onClick() {
