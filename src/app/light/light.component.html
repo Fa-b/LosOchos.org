@@ -24,7 +24,7 @@
 
 
         <ion-item lines="none">
-            <ion-range color="{{_device.on_state ? 'primary' : 'medium'}}" pin="true" (ionChange)="onBrightnessChange($event)" [(ngModel)]="_device.brightness">
+            <ion-range color="{{_device.on_state ? 'primary' : 'medium'}}" pin="true" (ionChange)="onBrightnessChange($event)">
                 <ion-icon slot="start" color="medium" size="small" name="sunny"></ion-icon>
                 <ion-icon slot="end" name="sunny"></ion-icon>
             </ion-range>
