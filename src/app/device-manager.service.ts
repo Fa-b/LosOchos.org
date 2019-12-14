@@ -105,6 +105,10 @@ export class DeviceManagerService {
     }
   }
 
+  set(data) {
+    this.socket.send("set", data);
+  }
+
   debugCommandAttach(value) {
     this.socket.send("debugCommandAttach", {name: value});
   }
