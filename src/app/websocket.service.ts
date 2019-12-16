@@ -38,13 +38,13 @@ export class WebsocketService {
           (data) => {
             if (data.hasOwnProperty('device')) {
               observer.next(data.device);
-            } else if(data.hasOwnProperty('id')) {
+            }/* else if(data.hasOwnProperty('id')) {
               observer.next(JSON.parse((<any>data).id.toString()));
             } else if(data.hasOwnProperty('message')) {
               observer.next(JSON.parse((<any>data).message.toString()));
             } else if (data.hasOwnProperty('error')) {
               observer.error(JSON.parse((<any>data).error.toString()));
-            } else {
+            }*/ else {
               console.log(data);
               observer.error("Invalid response");
             }

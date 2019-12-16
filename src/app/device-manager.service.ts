@@ -3,20 +3,19 @@ import { WebsocketService } from './websocket.service';
 import { IDevice } from './devices';
 import { Dictionary } from "lodash";
 import { Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 export class Device implements IDevice {
+  id: string;
   type: string;
   name: string;
-  id: string;
-  constructor(id: string, type: string, name?: string) {
+  
+  constructor(id: string, payload: IDevice) {
     this.id = id;
-    this.type = type;
-    this.name = name;
+    this.type = payload.type;
+    this.name = payload.name;
   }
 
-  static hasInstance(object: any): object is Device {
-    return object.hasOwnProperty("id") && object.hasOwnProperty("type");
-  }
 }
 
 @Injectable({
@@ -35,11 +34,27 @@ export class DeviceManagerService {
       this.socket.get('attach')
         .subscribe(
           (data) => {
-            if(Device.hasInstance(data)) {
-              // Add new Device to dictionary
-              this.deviceDict[data.id] = data.type;
-              // Notify subscribers
-              observer.next(data);
+            if(data.hasOwnProperty("id")) {
+              // Add new Device with empty type to dictionary
+              this.deviceDict[data.id] = "";//data.type;
+              console.log('Subscribed for device publish on id: ', data.id);
+              this.socket.get('publish').pipe(first())
+                .subscribe(
+                  (data) => {
+                    console.log(data);
+                    if(data.hasOwnProperty("payload")) {
+                      this.deviceDict[data.id] = data.payload;
+                      // Notify subscribers
+                      observer.next(data);
+                    }
+                  },
+                  (err) => {
+                    console.error('Error during device publish: ', err, Date.now());
+                  },
+                  () => {
+                    console.warn('Unsubscribed from device publish', Date.now());
+                  }
+                );
             }
           },
           (err) => {
@@ -57,12 +72,11 @@ export class DeviceManagerService {
       this.socket.get('detach')
         .subscribe(
           (data) => {
-            if(data.hasOwnProperty('id')) {
-              let type = this.deviceDict[data.id];
-              // Fetch type and remove Device from dictionary
+            if(data.hasOwnProperty("id")) {
+              let payload = this.deviceDict[data.id];
               delete this.deviceDict[data.id];
               // Notify subscribers
-              observer.next({ id: data.id, type: type });
+              observer.next({ id: data.id, payload: payload });
             }
           },
           (err) => {
@@ -80,8 +94,8 @@ export class DeviceManagerService {
       this.deviceAttachment()
         .subscribe(
           (data) => {
-            if(data.type === "Light") {
-              console.log("LighDevice attached");
+            if(data.payload.type === "Light") {
+              console.log("LightDevice attached");
               listener(data);
             }
           },
@@ -93,7 +107,7 @@ export class DeviceManagerService {
       this.deviceDetachment()
       .subscribe(
         (data) => {
-          if(data.type === "Light") {
+          if(data.payload.type === "Light") {
             console.log("LighDevice detached");
             listener(data);
           }

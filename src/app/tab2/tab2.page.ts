@@ -34,8 +34,12 @@ export class Tab2Page {
     this.deviceManager.debugCommandDetach(id);
   }
 
-  onChange(device) {
-    this.deviceManager.set(device);
+  onStateChange(device) {
+    this.deviceManager.set({ id: device.id, payload: { on_state: device.on_state } });
+  }
+
+  onBrightnessChange(device) {
+    this.deviceManager.set({ id: device.id, payload: { brightness: device.brightness } });
   }
 
 }

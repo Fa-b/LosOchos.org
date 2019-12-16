@@ -6,8 +6,8 @@ class LightDevice extends Device implements ILightDevice {
   rgb: boolean;
   brightness: number;
   on_state: boolean;
-  constructor(id: string, type: string, name?: string, on_state?: boolean, brightness?: number, rgb?: boolean) {
-    super(id, type, name);
+  constructor(id: string, payload: any, on_state?: boolean, brightness?: number, rgb?: boolean) {
+    super(id, payload);
 
     this.on_state = on_state;
     this.brightness = brightness;
@@ -35,7 +35,8 @@ export class LightComponent implements OnInit {
     }, 0);
   }
   @Output() detach: EventEmitter<string> = new EventEmitter<string>();
-  @Output() change: EventEmitter<Device> = new EventEmitter<Device>();
+  @Output() stateChange: EventEmitter<Device> = new EventEmitter<Device>();
+  @Output() brightnessChange: EventEmitter<Device> = new EventEmitter<Device>();
   constructor(private _ref: ChangeDetectorRef) {
 
   }
@@ -49,12 +50,12 @@ export class LightComponent implements OnInit {
   }
 
   onStateChange(event) {
-    this.change.emit(this._device);
+    this.stateChange.emit(this._device);
   }
 
   onBrightnessChange(event) {
     this._device.brightness = event.detail.value;
     this.device.on_state = true;
-    this.change.emit(this._device);
+    this.brightnessChange.emit(this._device);
   }
 }

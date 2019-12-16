@@ -14,7 +14,7 @@
 <ion-content>
   <div class="container">
     <app-light *ngFor="let device of deviceList"
-    [device]="device" (detach)="onDetach($event)" (change)="onChange($event)"></app-light>
+    [device]="device" (detach)="onDetach($event)" (stateChange)="onStateChange($event)" (brightnessChange)="onBrightnessChange($event)"></app-light>
 </div>
 
 </ion-content>
