@@ -1,43 +1,39 @@
-<ion-card>
-        <ion-fab vertical="top" horizontal="end" slot="fixed">
-                <ion-fab-button>
-                  <ion-icon name="settings"></ion-icon>
-                </ion-fab-button>
-                <ion-fab-list side="start">
-                  <ion-fab-button><ion-icon name="logo-vimeo"></ion-icon></ion-fab-button>
-                </ion-fab-list>
-              </ion-fab>
-    <ion-card-header>
-        <ion-card-subtitle>{{_device.id}}</ion-card-subtitle>
-        
-        <ion-item lines="none">
+<div class="item">
+        <ion-reorder slot="start"></ion-reorder>
+    <ion-card>
+        <ion-card-header>
+            <ion-card-subtitle>{{_device.id}}</ion-card-subtitle>
+
+            <ion-item lines="none">
+
                 <ion-card-title>{{_device.name}}</ion-card-title>
-            <!--<ion-label slot="end">
+                <!--<ion-label slot="end">
                 {{device.on_state ? "On" : "Off"}}
             </ion-label>-->
-            <ion-toggle slot="start" [(ngModel)]="_device.on_state" (ionChange)="onStateChange($event)"></ion-toggle>
-        </ion-item>
-        
-    </ion-card-header>
+                <ion-toggle slot="start" disabled="{{_device.brightness ? false : true}}" [(ngModel)]="_device.on_state"
+                    (ionChange)="onStateChange($event)"></ion-toggle>
+            </ion-item>
 
-    <ion-list>
+        </ion-card-header>
 
+        <ion-list class="content">
+            <ion-item lines="none">
+                <ion-range debounce="20" color="{{_device.on_state ? 'primary' : 'medium'}}" pin="true" (ionChange)="onBrightnessChange($event)">
+                    <ion-icon slot="start" color="medium" size="small" name="sunny"></ion-icon>
+                    <ion-icon slot="end" name="sunny"></ion-icon>
+                </ion-range>
+            </ion-item>
 
-        <ion-item lines="none">
-            <ion-range color="{{_device.on_state ? 'primary' : 'medium'}}" pin="true" (ionChange)="onBrightnessChange($event)">
-                <ion-icon slot="start" color="medium" size="small" name="sunny"></ion-icon>
-                <ion-icon slot="end" name="sunny"></ion-icon>
-            </ion-range>
-        </ion-item>
+            <ion-item lines="none">
+                <ion-icon name='flask' item-start></ion-icon>
+                <ion-button fill="outline" (click)="onClick()">
+                    Detach
+                </ion-button>
+                <ion-note item-end>
+                    Remove Device from List
+                </ion-note>
+            </ion-item>
+        </ion-list>
 
-        <ion-item lines="none">
-            <ion-icon name='flask' item-start></ion-icon>
-            <ion-button fill="outline" (click)="onClick()">
-                Detach
-            </ion-button>
-            <ion-note item-end>
-                Remove Device from List
-            </ion-note>
-        </ion-item>
-    </ion-list>
-</ion-card>
+    </ion-card>
+</div>

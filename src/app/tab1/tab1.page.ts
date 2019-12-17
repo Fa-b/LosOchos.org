@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { DeviceManagerService } from '../device-manager.service';
 
 @Component({
   selector: 'app-tab1',
@@ -11,7 +10,7 @@ import { DeviceManagerService } from '../device-manager.service';
 export class Tab1Page {
 
 
-  constructor(public deviceManager: DeviceManagerService) {
+  constructor() {
 
   }
 

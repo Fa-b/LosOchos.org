@@ -1,6 +1,6 @@
 
 export interface IDevice {
-    id: string;
+    /*id: string;*/
     type: string;
     name?: string;
 }

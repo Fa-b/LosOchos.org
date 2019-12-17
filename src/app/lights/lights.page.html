@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+
+    <ion-item lines="none">
+      <ion-title>
+        Light
+      </ion-title>
+      <ion-button fill="outline" (click)="toggleReorderGroup()">Toggle</ion-button>
+      <ion-button fill="outline" (click)="onAttach()">Attach Device</ion-button>
+    </ion-item>
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content>
+  <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false">
+    <div *ngFor="let device of lightsService.deviceList" class="container">
+      <app-light [device]="device" (viewInit)="onViewInit($event)" (detach)="onDetach($event)" ></app-light>
+    </div>
+  </ion-reorder-group>
+</ion-content>

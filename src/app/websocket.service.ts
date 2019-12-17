@@ -15,9 +15,13 @@ export class WebsocketService {
     constructor(
       public http: HttpClient) {
   
-      this.socket = io("http://localhost:8020");
+      this.socket = io("http://192.168.178.26:8020", { path: "/LosOchos.org/socket.io" });
   
       console.log('WebSocket Service Initialized');
+    }
+
+    change(address: string) {
+      this.socket = io(address, { path: "/LosOchos.org/socket.io" });
     }
   
     send(route: string,

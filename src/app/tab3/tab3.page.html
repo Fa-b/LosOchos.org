@@ -1,9 +1,20 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Music
+      Config
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content></ion-content>
+<ion-content>
+  <ion-item>
+    <ion-label><b>Address:</b></ion-label>
+    <ion-input [(ngModel)]="socketConfig.address" placeholder="Enter DynDNS"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label><b>Port:</b></ion-label>
+    <ion-input [(ngModel)]="socketConfig.port" placeholder="Enter Port"></ion-input>
+  </ion-item>
+
+  <ion-button fill="outline" (click)="onClick()">Submit</ion-button>
+</ion-content>

@@ -3,15 +3,20 @@ import { WebsocketService } from './websocket.service';
 import { IDevice } from './devices';
 import { Dictionary } from "lodash";
 import { Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { first, filter } from 'rxjs/operators';
 
 export class Device implements IDevice {
-  id: string;
   type: string;
   name: string;
-  
-  constructor(id: string, payload: IDevice) {
-    this.id = id;
+  constructor(payload?: IDevice) {
+
+    if(payload) {
+      this.type = payload.type;
+      this.name = payload.name;
+    }
+  }
+
+  updateState(payload: IDevice) {
     this.type = payload.type;
     this.name = payload.name;
   }
@@ -22,9 +27,12 @@ export class Device implements IDevice {
   providedIn: 'root'
 })
 export class DeviceManagerService {
-  deviceDict: Dictionary<string>
+  deviceDict: Dictionary<Device>
+  dummyCounter: number;
   constructor(public socket: WebsocketService) {
     this.deviceDict = [];
+
+    this.dummyCounter = 0;
 
     console.log('DeviceManager Service Initialized');
   }
@@ -36,16 +44,17 @@ export class DeviceManagerService {
           (data) => {
             if(data.hasOwnProperty("id")) {
               // Add new Device with empty type to dictionary
-              this.deviceDict[data.id] = "";//data.type;
+              this.deviceDict[data.id] = new Device();//"";//data.type;
               console.log('Subscribed for device publish on id: ', data.id);
-              this.socket.get('publish').pipe(first())
+              // Only take 'publish when id matches and also only take it once!
+              this.socket.get('publish').pipe(filter(msg => msg.id === data.id), first())
                 .subscribe(
                   (data) => {
                     console.log(data);
                     if(data.hasOwnProperty("payload")) {
-                      this.deviceDict[data.id] = data.payload;
-                      // Notify subscribers
-                      observer.next(data);
+                      this.deviceDict[data.id].updateState(data.payload);
+                      // Notify subscribers only once!
+                      observer.next(this.deviceDict[data.id]);
                     }
                   },
                   (err) => {
@@ -73,10 +82,10 @@ export class DeviceManagerService {
         .subscribe(
           (data) => {
             if(data.hasOwnProperty("id")) {
-              let payload = this.deviceDict[data.id];
+              let device = this.deviceDict[data.id];
               delete this.deviceDict[data.id];
               // Notify subscribers
-              observer.next({ id: data.id, payload: payload });
+              observer.next(device);
             }
           },
           (err) => {
@@ -93,10 +102,10 @@ export class DeviceManagerService {
     if(event == 'lightAttach') {
       this.deviceAttachment()
         .subscribe(
-          (data) => {
-            if(data.payload.type === "Light") {
+          (device) => {
+            if(device.type === "Light") {
               console.log("LightDevice attached");
-              listener(data);
+              listener(device);
             }
           },
           () => {
@@ -106,10 +115,10 @@ export class DeviceManagerService {
     } else if(event == 'lightDetach') {
       this.deviceDetachment()
       .subscribe(
-        (data) => {
-          if(data.payload.type === "Light") {
+        (device) => {
+          if(device.type === "Light") {
             console.log("LighDevice detached");
-            listener(data);
+            listener(device);
           }
         },
         () => {
@@ -119,15 +128,27 @@ export class DeviceManagerService {
     }
   }
 
-  set(data) {
-    this.socket.send("set", data);
+  set(device, data) {
+    let id = Object.keys(this.deviceDict).find(element => this.deviceDict[element] === device);
+    if(id) {
+      this.socket.send("set", {
+        id: id,
+        payload: data
+      });
+    }
   }
 
   debugCommandAttach(value) {
-    this.socket.send("debugCommandAttach", {name: value});
+    this.dummyCounter += 1;
+    this.socket.send("debugCommandAttach", {name: "Dummy LED" + this.dummyCounter, type: value});
   }
 
-  debugCommandDetach(value) {
-    this.socket.send("debugCommandDetach", {id: value});
+  debugCommandDetach(device) {
+    let id = Object.keys(this.deviceDict).find(element => this.deviceDict[element] === device);
+    if(id) {
+      this.socket.send("debugCommandDetach", {
+        id: Object.keys(this.deviceDict).find(element => this.deviceDict[element] === device)
+      });
+    }
   }
 }

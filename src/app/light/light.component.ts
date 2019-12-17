@@ -1,19 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { ILightDevice } from '../devices';
-import { Device } from '../device-manager.service';
+import { LightDevice } from '../lights.service';
 
-class LightDevice extends Device implements ILightDevice {
-  rgb: boolean;
-  brightness: number;
-  on_state: boolean;
-  constructor(id: string, payload: any, on_state?: boolean, brightness?: number, rgb?: boolean) {
-    super(id, payload);
 
-    this.on_state = on_state;
-    this.brightness = brightness;
-    this.rgb = rgb;
-  }
-}
 
 @Component({
   selector: 'app-light',
@@ -22,40 +10,50 @@ class LightDevice extends Device implements ILightDevice {
 })
 export class LightComponent implements OnInit {
   private _device: LightDevice;
+  private changeCallback: (data: any) => void;
 
   @Input()
   get device() {
     return this._device;
   }
   set device(d: LightDevice){
-    // Official bug fix see GitHub:
-    // https://github.com/ionic-team/ionic/issues/17830
-    setTimeout(() => {
       this._device = d;
-    }, 0);
   }
-  @Output() detach: EventEmitter<string> = new EventEmitter<string>();
-  @Output() stateChange: EventEmitter<Device> = new EventEmitter<Device>();
-  @Output() brightnessChange: EventEmitter<Device> = new EventEmitter<Device>();
-  constructor(private _ref: ChangeDetectorRef) {
 
+  @Output() detach: EventEmitter<LightDevice> = new EventEmitter<LightDevice>();
+  @Output() viewInit: EventEmitter<LightDevice> = new EventEmitter<LightDevice>();
+  constructor(private _ref: ChangeDetectorRef) {
+    
   }
 
   ngOnInit() {
+    this._device.on = (event, callback) => {
+      if(event === 'change') {
+        this.changeCallback = callback;
+      }
 
+      return this._device;
+    };
+
+    this.viewInit.emit(this._device);
   }
 
   onClick() {
-    this.detach.emit(this._device.id);
+    this.detach.emit(this._device);
   }
 
   onStateChange(event) {
-    this.stateChange.emit(this._device);
+    this.changeCallback({ on_state: this._device.on_state });
+    // this.stateChange.emit(this._device);
   }
 
   onBrightnessChange(event) {
     this._device.brightness = event.detail.value;
-    this.device.on_state = true;
-    this.brightnessChange.emit(this._device);
+    if(this._device.brightness > 0)
+      this.device.on_state = true;
+    else
+      this.device.on_state = false;
+      this.changeCallback({ brightness: this._device.brightness });
+    // this.brightnessChange.emit(this._device);
   }
 }
