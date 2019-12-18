@@ -46,18 +46,18 @@ export class LightComponent {
   }
 
   onStateChange(event) {
-    // this.changeCallback({ on_state: this._device.on_state });
+    // console.log(event);
+    this._device.on_state = event;//event.detail.checked;
     this.lightsService.emit("change", this._device, ["on_state"]);
   }
 
   onBrightnessChange(event) {
-    this._device.brightness = event.detail.value;
+    // console.log(event);
+    this._device.brightness = event;//event.detail.value;
     if(this._device.brightness > 0)
       this.device.on_state = true;
     else
       this.device.on_state = false;
-      // this.changeCallback({ brightness: this._device.brightness });
       this.lightsService.emit("change", this._device, ["brightness"]);
-    // this.brightnessChange.emit(this._device);
   }
 }
