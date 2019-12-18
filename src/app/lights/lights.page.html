@@ -15,7 +15,7 @@
 <ion-content>
   <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false">
     <div *ngFor="let device of lightsService.deviceList" class="container">
-      <app-light [device]="device" (viewInit)="onViewInit($event)" (detach)="onDetach($event)" ></app-light>
+      <app-light [device]="device"></app-light>
     </div>
   </ion-reorder-group>
 </ion-content>

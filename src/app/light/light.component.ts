@@ -1,5 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { LightDevice } from '../lights.service';
+import { Component, Input } from '@angular/core';
+import { LightsService } from '../lights.service';
+import { LightDevice } from '../devices';
 
 
 
@@ -8,10 +9,10 @@ import { LightDevice } from '../lights.service';
   templateUrl: './light.component.html',
   styleUrls: ['./light.component.scss'],
 })
-export class LightComponent implements OnInit {
+export class LightComponent {
   private _device: LightDevice;
-  private changeCallback: (data: any) => void;
-
+  
+  // private changeCallback: (data: any) => void = () => {};
   @Input()
   get device() {
     return this._device;
@@ -20,31 +21,33 @@ export class LightComponent implements OnInit {
       this._device = d;
   }
 
-  @Output() detach: EventEmitter<LightDevice> = new EventEmitter<LightDevice>();
-  @Output() viewInit: EventEmitter<LightDevice> = new EventEmitter<LightDevice>();
-  constructor(private _ref: ChangeDetectorRef) {
+  // @Output() detach: EventEmitter<LightDevice> = new EventEmitter<LightDevice>();
+  // @Output() viewInit: EventEmitter<LightDevice> = new EventEmitter<LightDevice>();
+  constructor(private lightsService: LightsService) {
     
   }
 
-  ngOnInit() {
-    this._device.on = (event, callback) => {
-      if(event === 'change') {
-        this.changeCallback = callback;
-      }
+  // ngOnInit() {
+    
+  //   this._device.on = (event, callback) => {
+  //     if(event === 'change') {
+  //       // this.changeCallback = callback;
+  //     }
 
-      return this._device;
-    };
+  //     return this._device;
+  //   };
 
-    this.viewInit.emit(this._device);
-  }
+  //   this.viewInit.emit(this._device);
+  // }
 
   onClick() {
-    this.detach.emit(this._device);
+    // this.detach.emit(this._device);
+    this.lightsService.emit("detach", this._device, []);
   }
 
   onStateChange(event) {
-    this.changeCallback({ on_state: this._device.on_state });
-    // this.stateChange.emit(this._device);
+    // this.changeCallback({ on_state: this._device.on_state });
+    this.lightsService.emit("change", this._device, ["on_state"]);
   }
 
   onBrightnessChange(event) {
@@ -53,7 +56,8 @@ export class LightComponent implements OnInit {
       this.device.on_state = true;
     else
       this.device.on_state = false;
-      this.changeCallback({ brightness: this._device.brightness });
+      // this.changeCallback({ brightness: this._device.brightness });
+      this.lightsService.emit("change", this._device, ["brightness"]);
     // this.brightnessChange.emit(this._device);
   }
 }

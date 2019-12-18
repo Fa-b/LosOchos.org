@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-tab1',
@@ -7,13 +7,16 @@ import { Component } from '@angular/core';
 })
 
 
-export class Tab1Page {
+export class Tab1Page implements AfterViewInit {
 
 
   constructor() {
 
   }
 
+  ngAfterViewInit() {
+    console.log("Here comes the home tab...");
+  }
 
 }
 // in der .ts ist typescript, in der html der zugehörige layout kram und in der css styling

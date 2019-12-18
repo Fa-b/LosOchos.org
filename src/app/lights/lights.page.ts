@@ -1,8 +1,6 @@
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
-import {  Device } from '../device-manager.service';
 import { IonReorderGroup } from '@ionic/angular';
 import { LightsService } from '../lights.service';
-import { ILightDevice } from '../devices';
 
 @Component({
   selector: 'app-lights',
@@ -19,13 +17,16 @@ export class LightsPage implements AfterViewInit {
 
   ngAfterViewInit() {
     this.reorderGroup.disabled = true;
+    console.log("Here comes the lights tab...");
   }
 
-  onViewInit(device) {
-    device.on('change', (data) => {
-      this.lightsService.deviceManager.set(device, data);
-    });
-  }
+  // onViewInit(device) {
+  //   // device.on('change', (data) => {
+  //   //   this.lightsService.deviceManager.set(device, data);
+  //   // });
+    
+    
+  // }
 
   // Todo: check
   doReorder(ev: any) {
@@ -48,12 +49,12 @@ export class LightsPage implements AfterViewInit {
 
   // Debug commands
   onAttach() {
-    this.lightsService.deviceManager.debugCommandAttach("Light");
+    this.lightsService.debugAttach();
   }
 
-  onDetach(device) {
-    this.lightsService.deviceManager.debugCommandDetach(device);
-  }
+  // onDetach(device) {
+  //   this.lightsService.deviceManager.debugCommandDetach(device);
+  // }
 
   // onStateChange(device) {
   //   this.deviceManager.set(device, { on_state: device.on_state });
