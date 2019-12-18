@@ -1,39 +1,43 @@
-<div class="item">
-        <ion-reorder slot="start"></ion-reorder>
-    <ion-card>
-        <ion-card-header>
-            <ion-card-subtitle>{{_device.id}}</ion-card-subtitle>
+<ion-item-sliding #item>
+    <ion-item-options (ionSwipe)="onSticky(item)" side="start">
+        <ion-item-option color="warning" (click)="onSticky(item)">
+            <ion-icon slot="icon-only" name="pin"></ion-icon>
+        </ion-item-option>
+    </ion-item-options>
+
+    <ion-item class="item">
+        <ion-reorder slot="start">
+                <ion-icon name="reorder"></ion-icon>
+        </ion-reorder>
+        <div class="content">
 
             <ion-item lines="none">
 
-                <ion-card-title>{{_device.name}}</ion-card-title>
+                <ion-label><b>{{_device.name}}</b></ion-label>
                 <!--<ion-label slot="end">
-                {{device.on_state ? "On" : "Off"}}
-            </ion-label>-->
+                        {{device.on_state ? "On" : "Off"}}
+                    </ion-label>-->
                 <ion-toggle slot="start" disabled="{{_device.brightness ? false : true}}" [(ngModel)]="_device.on_state"
-                    (ngModelChange)="onStateChange($event)"></ion-toggle>
+                    (ionChange)="onStateChange($event)"></ion-toggle>
             </ion-item>
 
-        </ion-card-header>
-
-        <ion-list class="content">
             <ion-item lines="none">
-                <ion-range debounce="20" [(ngModel)]="_device.brightness" color="{{_device.on_state ? 'primary' : 'medium'}}" pin="true" (ngModelChange)="onBrightnessChange($event)">
+                <ion-range debounce="20" [(ngModel)]="_device.brightness" color="{{_device.on_state ? 'primary' : 'medium'}}"
+                    pin="true" (ngModelChange)="onBrightnessChange($event)">
                     <ion-icon slot="start" color="medium" size="small" name="sunny"></ion-icon>
                     <ion-icon slot="end" name="sunny"></ion-icon>
                 </ion-range>
             </ion-item>
 
-            <ion-item lines="none">
-                <ion-icon name='flask' item-start></ion-icon>
-                <ion-button fill="outline" (click)="onClick()">
-                    Detach
-                </ion-button>
-                <ion-note item-end>
-                    Remove Device from List
-                </ion-note>
-            </ion-item>
-        </ion-list>
+        </div>
+    </ion-item>
 
-    </ion-card>
-</div>
+    <ion-item-options (ionSwipe)="onDetach(item)" side="end">
+        <ion-item-option color="light" (click)="onConfig(item)">
+            <ion-icon slot="icon-only" name="more"></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="danger" (click)="onDetach(item)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-item-option>
+    </ion-item-options>
+</ion-item-sliding>

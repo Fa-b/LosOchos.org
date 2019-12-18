@@ -1,8 +1,19 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="secondary">
+      <ion-button color="primary">
+        <ion-icon slot="start" name="arrow-back"></ion-icon>
+        Back
+      </ion-button>
+    </ion-buttons>
     <ion-title>
       Config
     </ion-title>
+    <ion-buttons slot="primary">
+        <ion-button color="primary" (click)="onClick()">
+          Confirm
+        </ion-button>
+      </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -15,6 +26,5 @@
     <ion-label><b>Port:</b></ion-label>
     <ion-input [(ngModel)]="port" placeholder="Enter Port"></ion-input>
   </ion-item>
-
-  <ion-button fill="outline" (click)="onClick()">Submit</ion-button>
+  
 </ion-content>

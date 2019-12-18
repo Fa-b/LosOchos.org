@@ -1,21 +1,33 @@
 <ion-header>
   <ion-toolbar>
 
-    <ion-item lines="none">
-      <ion-title>
-        Light
-      </ion-title>
-      <ion-button fill="outline" (click)="toggleReorderGroup()">Toggle</ion-button>
-      <ion-button fill="outline" (click)="onAttach()">Attach Device</ion-button>
-    </ion-item>
-  </ion-toolbar>
+    <ion-buttons slot="secondary">
+      <ion-button color="primary" (click)="onAttach()">
+        <ion-icon slot="icon-only" name="add-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
 
+    <ion-title>Lights</ion-title>
+
+    <ion-buttons slot="primary">
+      <ion-button color="primary" (click)="toggleReorderGroup()">
+        {{reorderGroup.disabled ? "Reorder" : "Cancel"}}
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
 </ion-header>
 
+
 <ion-content>
-  <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pullingIcon="arrow-dropdown" refreshingSpinner="dots">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="true">
     <div *ngFor="let device of lightsService.deviceList" class="container">
-      <app-light [device]="device"></app-light>
+      <app-light [device]="device" (sticky)="onSticky($event)"></app-light>
     </div>
   </ion-reorder-group>
 </ion-content>

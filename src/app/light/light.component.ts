@@ -1,6 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { LightsService } from '../lights.service';
 import { LightDevice } from '../devices';
+import { async } from 'q';
+import { ActionSheetController } from '@ionic/angular';
 
 
 
@@ -21,9 +23,11 @@ export class LightComponent {
       this._device = d;
   }
 
-  // @Output() detach: EventEmitter<LightDevice> = new EventEmitter<LightDevice>();
-  // @Output() viewInit: EventEmitter<LightDevice> = new EventEmitter<LightDevice>();
-  constructor(private lightsService: LightsService) {
+  @Output() sticky: EventEmitter<LightDevice> = new EventEmitter<LightDevice>();
+  constructor(
+    private actionSheetController: ActionSheetController,
+    private lightsService: LightsService
+    ) {
     
   }
 
@@ -40,14 +44,66 @@ export class LightComponent {
   //   this.viewInit.emit(this._device);
   // }
 
-  onClick() {
+  onDetach(item) {
+    item.close();
     // this.detach.emit(this._device);
     this.lightsService.emit("detach", this._device, []);
   }
 
+  onSticky(item) {
+    item.close();
+    this.sticky.emit(this._device);
+  }
+
+  /** Todo:
+   * - Change Name
+   * - ...
+   *
+   * */
+  async onConfig(item) {
+    item.close();
+      const actionSheet = await this.actionSheetController.create({
+        header: 'Albums',
+        buttons: [{
+          text: 'Delete',
+          role: 'destructive',
+          icon: 'trash',
+          handler: () => {
+            console.log('Delete clicked');
+          }
+        }, {
+          text: 'Share',
+          icon: 'share',
+          handler: () => {
+            console.log('Share clicked');
+          }
+        }, {
+          text: 'Play (open modal)',
+          icon: 'arrow-dropright-circle',
+          handler: () => {
+            console.log('Play clicked');
+          }
+        }, {
+          text: 'Favorite',
+          icon: 'heart',
+          handler: () => {
+            console.log('Favorite clicked');
+          }
+        }, {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }]
+      });
+      await actionSheet.present();
+  }
+
   onStateChange(event) {
     // console.log(event);
-    this._device.on_state = event;//event.detail.checked;
+    this._device.on_state = event.detail.checked;
     this.lightsService.emit("change", this._device, ["on_state"]);
   }
 

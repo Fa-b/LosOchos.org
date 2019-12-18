@@ -8,27 +8,20 @@ import { LightsService } from '../lights.service';
   styleUrls: ['lights.page.scss']
 })
 export class LightsPage implements AfterViewInit {
-  
 
-  @ViewChild(IonReorderGroup, {static: false}) reorderGroup: IonReorderGroup;
+  @ViewChild(IonReorderGroup, {static: true}) reorderGroup: IonReorderGroup;
   constructor(private lightsService: LightsService) {
-    
+
   }
 
   ngAfterViewInit() {
-    this.reorderGroup.disabled = true;
+    // this.reorderGroup.disabled = true;
     console.log("Here comes the lights tab...");
   }
 
-  // onViewInit(device) {
-  //   // device.on('change', (data) => {
-  //   //   this.lightsService.deviceManager.set(device, data);
-  //   // });
-    
-    
-  // }
 
-  // Todo: check
+  // Todo: hide deviceList here... use accessor functions instead
+  // must also happen in html :-(
   doReorder(ev: any) {
     // Before complete is called with the items they will remain in the
     // order before the drag
@@ -45,6 +38,34 @@ export class LightsPage implements AfterViewInit {
 
   toggleReorderGroup() {
     this.reorderGroup.disabled = !this.reorderGroup.disabled;
+  }
+
+  doRefresh(event) {
+    // Todo: clear deviceList and reconnect to backend
+    // Possibly find a even better solution that does not involve a real disconnect
+    // of all connected devices (e.g. republish with timeout)
+
+    this.lightsService.detachAll(5000)
+    .then(
+      (data) => {
+        event.target.complete();
+        console.log(data);
+      }
+    ).catch(
+      (error) => {
+        event.target.complete();
+        console.log(error);
+      });
+  }
+
+  /** Todo:
+   * - manage to store index of sticky device to local storage and
+   * - order list respecting given index (filter?!)
+   * 
+   *
+   */
+  onSticky(device) {
+    console.log(this.lightsService.deviceList.findIndex(entry => entry == device));
   }
 
   // Debug commands

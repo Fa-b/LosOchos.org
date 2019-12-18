@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DeviceManagerService } from './device-manager.service';
 import { LightDevice } from './devices';
+import { Dictionary } from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,6 @@ export class LightsService {
   deviceList: Array<LightDevice>;
   constructor(public deviceManager: DeviceManagerService) {
     this.deviceList = [];
-
     console.log("Lights Service initialized");
   }
 
@@ -50,6 +50,24 @@ export class LightsService {
     } else if (event === "detach") {
       this.deviceManager.debugCommandDetach(device);
     }
+  }
+
+  detachAll(timeout: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let it = 0;
+      // this.deviceList.forEach((element) => {
+      //   this.refreshList[element] = it+=1;
+      //   this.deviceManager.debugCommandDetach(element);
+      // });
+
+      setTimeout(() => {
+        reject("Timed out :-(");
+      }, timeout);
+
+      // Todo: resolve when done..
+        resolve();
+
+    });
   }
 
   // Debug Commands

@@ -1,4 +1,12 @@
 .item {
     display: flex;
-    align-items: center;
+    align-items: center; 
+    --padding-start:0px;      
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-left: 16px;
 }

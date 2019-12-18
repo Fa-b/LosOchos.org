@@ -6,10 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { TabsPageRoutingModule } from './tabs-routing.module';
 
 import { TabsPage } from './tabs.page';
-import { WebsocketService } from '../websocket.service';
-import { DeviceManagerService } from '../device-manager.service';
-import { LightsService } from '../lights.service';
-
 
 @NgModule({
   imports: [
