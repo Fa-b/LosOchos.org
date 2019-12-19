@@ -1,11 +1,11 @@
-<ion-item-sliding #item>
+<ion-item-sliding [disabled]="disabled" #item>
     <ion-item-options (ionSwipe)="onSticky(item)" side="start">
         <ion-item-option color="warning" (click)="onSticky(item)">
             <ion-icon slot="icon-only" name="pin"></ion-icon>
         </ion-item-option>
     </ion-item-options>
 
-    <ion-item class="item">
+    <ion-item [disabled]="disabled" class="item">
         <ion-reorder slot="start">
                 <ion-icon name="reorder"></ion-icon>
         </ion-reorder>

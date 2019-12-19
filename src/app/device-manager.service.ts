@@ -33,7 +33,7 @@ export class DeviceManagerService {
               this.socket.get('publish').pipe(filter(msg => msg.id === data.id), first())
                 .subscribe(
                   (data) => {
-                    console.log(data);
+                    // console.log(data);
                     // received publish, have to route the correct type to create instance!
                     if (data.hasOwnProperty("payload") && data.payload.type === "Light" ) {
                       // Add new LightDevice to dictionary
@@ -65,6 +65,23 @@ export class DeviceManagerService {
   private deviceResponse(): Observable<IDevice> {
     return Observable.create((observer) => {
       this.socket.get('set')
+        .subscribe(
+          (data) => {
+            if (data.hasOwnProperty("id") && data.hasOwnProperty("payload")) {
+              // If valid: notify subscribers
+              // this.deviceDict[data.id] = <T>this.deviceDict[data.id];
+              this.deviceDict[data.id].updateState(data.payload);
+              observer.next(this.deviceDict[data.id]);
+            }
+          },
+          (err) => {
+            console.error('Error during device set response: ', err, Date.now());
+          },
+          () => {
+            console.warn('Unsubscribed from device set response', Date.now());
+          }
+        );
+        this.socket.get('get')
         .subscribe(
           (data) => {
             if (data.hasOwnProperty("id") && data.hasOwnProperty("payload")) {
@@ -157,6 +174,61 @@ export class DeviceManagerService {
         payload: data
       });
     }
+  }
+
+  get(device, data) {
+    let id = Object.keys(this.deviceDict).find(element => this.deviceDict[element] === device);
+    if (id) {
+      this.socket.send("get", {
+        id: id,
+        payload: data
+      });
+    }
+  }
+
+  refreshList(timeout: number): Observable<any> {
+    let refreshList = {};
+
+    return new Observable((observer) => {
+      this.socket.get('get')
+      .subscribe(
+        (data) => {
+        if (data.hasOwnProperty("id")) {
+          // We only keep devices that we will have to kill from gui
+          delete refreshList[data.id];
+        }
+  
+        // If this is the case, all our ids responded :)
+        if(Object.keys(refreshList).length === 0) {
+          observer.complete();
+        }
+      });
+  
+      // request a get package for all devices and all properties on them
+      for(let id in this.deviceDict) {
+        refreshList[id] = this.deviceDict[id];
+        this.get(this.deviceDict[id], this.deviceDict[id]);
+      }
+  
+  
+      setTimeout(() => {
+        // OK, some of our devices are not responding,
+        // so we should clear them from our list!
+        for(let id in refreshList) {
+          if(this.deviceDict[id]) {
+            // start removing them here:
+            delete this.deviceDict[id];
+            // Then send its residing instance to subscriber
+            observer.next(refreshList[id]);
+          } else {
+            delete refreshList[id];
+            console.log("Oops, detached itself :-)");
+          } 
+        }
+        // Then complete
+        observer.complete();
+      }, timeout);
+    });
   }
 
   debugCommandAttach(value) {

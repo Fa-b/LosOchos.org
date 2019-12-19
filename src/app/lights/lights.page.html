@@ -27,7 +27,7 @@
 
   <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="true">
     <div *ngFor="let device of lightsService.deviceList" class="container">
-      <app-light [device]="device" (sticky)="onSticky($event)"></app-light>
+      <app-light [disabled]="refreshing" [device]="device" (sticky)="onSticky($event)"></app-light>
     </div>
   </ion-reorder-group>
 </ion-content>

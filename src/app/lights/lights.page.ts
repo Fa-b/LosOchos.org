@@ -8,7 +8,7 @@ import { LightsService } from '../lights.service';
   styleUrls: ['lights.page.scss']
 })
 export class LightsPage implements AfterViewInit {
-
+  refreshing: boolean = false;
   @ViewChild(IonReorderGroup, {static: true}) reorderGroup: IonReorderGroup;
   constructor(private lightsService: LightsService) {
 
@@ -40,19 +40,22 @@ export class LightsPage implements AfterViewInit {
     this.reorderGroup.disabled = !this.reorderGroup.disabled;
   }
 
+  /**
+   * Performs a refresh of the available/responsive devices
+   * Unresponsive devices will be removed from the list
+   */
   doRefresh(event) {
-    // Todo: clear deviceList and reconnect to backend
-    // Possibly find a even better solution that does not involve a real disconnect
-    // of all connected devices (e.g. republish with timeout)
+    this.refreshing = true;
 
-    this.lightsService.detachAll(5000)
+    this.lightsService.refreshAll(1000)
     .then(
       (data) => {
+        this.refreshing = false;
         event.target.complete();
-        console.log(data);
       }
     ).catch(
       (error) => {
+        this.refreshing = false;
         event.target.complete();
         console.log(error);
       });

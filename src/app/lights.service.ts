@@ -23,7 +23,7 @@ export class LightsService {
 
     this.deviceManager.on('lightResponse', (device) => {
       // Received response
-      console.log(device);
+      // console.log(device);
     });
 
     this.deviceManager.on('lightDetach', (device) => {
@@ -52,20 +52,29 @@ export class LightsService {
     }
   }
 
-  detachAll(timeout: number): Promise<any> {
+  refreshAll(timeout: number): Promise<any> {
+    let i = 0;
+
     return new Promise((resolve, reject) => {
-      let it = 0;
-      // this.deviceList.forEach((element) => {
-      //   this.refreshList[element] = it+=1;
-      //   this.deviceManager.debugCommandDetach(element);
-      // });
+      this.deviceManager.refreshList(timeout)
+      .subscribe(
+        (data) => {
+          // Delete each unresponsive device
+            i += 1;
+            let deviceIndex = this.deviceList.findIndex(entry => entry === data);
+            if (deviceIndex >= 0) {
+              this.deviceList.splice(deviceIndex, 1);
+            }
+        },
+        (error) =>{
 
-      setTimeout(() => {
-        reject("Timed out :-(");
-      }, timeout);
-
-      // Todo: resolve when done..
-        resolve();
+        },
+        () => {
+          if(i > 0)
+            reject("Refresh failed, removed " + i + " devices.");
+          else
+            resolve("Refresh successful :-)");
+        });
 
     });
   }
