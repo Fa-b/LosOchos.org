@@ -12,7 +12,8 @@
 export class IDevice {
   constructor(
     public name?: string,
-    public type?: string ) { }
+    public type?: string,
+    public defaults?: object ) { }
 }
 
 // export interface IDevice {
@@ -23,6 +24,7 @@ export class IDevice {
 export class BaseDevice implements IDevice {
   public name: string;
   public type: string;
+  public defaults: object;
   constructor(name: string = "", type: string = "", payload?: IDevice) {
     if(payload) {
       this.name = payload.name;
@@ -42,6 +44,10 @@ export class BaseDevice implements IDevice {
     if (payload.hasOwnProperty("name")) {
       this.name = payload.name;
     }
+  }
+
+  updateDefaults(payload: IDevice) {
+      this.defaults = payload;
   }
 
 }

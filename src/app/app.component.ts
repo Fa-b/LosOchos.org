@@ -3,9 +3,6 @@ import { Component } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { WebsocketService } from './websocket.service';
-import { DeviceManagerService } from './device-manager.service';
-import { LightsService } from './lights.service';
 
 @Component({
   selector: 'app-root',
@@ -16,10 +13,7 @@ export class AppComponent {
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
-    private statusBar: StatusBar/*,
-    private socket: WebsocketService,
-    private deviceManager: DeviceManagerService,
-    private lightsService: LightsService*/
+    private statusBar: StatusBar
   ) {
     this.initializeApp();
   }

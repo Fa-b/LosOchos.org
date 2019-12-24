@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
+import { DeviceConfigComponent } from '../device-config/device-config.component';
+import { NavController } from '@ionic/angular';
 
 const routes: Routes = [
   {
@@ -52,7 +54,9 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [
+    RouterModule.forChild(routes)
+  ],
   exports: [RouterModule]
 })
 export class TabsPageRoutingModule {}

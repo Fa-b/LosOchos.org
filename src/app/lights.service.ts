@@ -23,7 +23,7 @@ export class LightsService {
 
     this.deviceManager.on('lightResponse', (device) => {
       // Received response
-      // console.log(device);
+      console.log(device);
     });
 
     this.deviceManager.on('lightDetach', (device) => {
@@ -46,7 +46,11 @@ export class LightsService {
     }
 
     if (event === "change") {
+      // use pat 'set' for changes
       this.deviceManager.set(device, packet);
+    } else if (event === "store") {
+      // Storing new configuration to EEPROM
+      this.deviceManager.write_eeprom(device, packet);
     } else if (event === "detach") {
       this.deviceManager.debugCommandDetach(device);
     }

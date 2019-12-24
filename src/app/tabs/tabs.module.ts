@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { TabsPageRoutingModule } from './tabs-routing.module';
 
 import { TabsPage } from './tabs.page';
+import { DeviceConfigComponent } from '../device-config/device-config.component';
+import { TextChangeComponent } from '../text-change/text-change.component';
 
 @NgModule({
   imports: [
@@ -14,8 +16,14 @@ import { TabsPage } from './tabs.page';
     FormsModule,
     TabsPageRoutingModule
   ],
+  entryComponents: [
+    DeviceConfigComponent,
+    TextChangeComponent
+  ],
   declarations: [
-    TabsPage
+    TabsPage,
+    DeviceConfigComponent,
+    TextChangeComponent
   ]
 })
 export class TabsPageModule {}

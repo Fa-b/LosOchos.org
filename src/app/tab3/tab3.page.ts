@@ -1,5 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { WebsocketService } from '../websocket.service';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab3',
@@ -11,6 +12,7 @@ export class Tab3Page implements AfterViewInit {
   private port: string;
 
   constructor(
+    private navCtrl: NavController,
     public socket: WebsocketService
   ) {
     this.address = socket.getConfig().address;

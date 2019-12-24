@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { LightsService } from '../lights.service';
 import { LightDevice } from '../devices';
-import { async } from 'q';
-import { ActionSheetController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
+import { DeviceConfigComponent } from '../device-config/device-config.component';
 
 
 
@@ -23,28 +23,15 @@ export class LightComponent {
     this._device = d;
   }
 
-  @Input() disabled:boolean;
+  @Input() disabled: boolean;
 
   @Output() sticky: EventEmitter<LightDevice> = new EventEmitter<LightDevice>();
   constructor(
-    private actionSheetController: ActionSheetController,
+    private modalController: ModalController,
     private lightsService: LightsService
   ) {
 
   }
-
-  // ngOnInit() {
-
-  //   this._device.on = (event, callback) => {
-  //     if(event === 'change') {
-  //       // this.changeCallback = callback;
-  //     }
-
-  //     return this._device;
-  //   };
-
-  //   this.viewInit.emit(this._device);
-  // }
 
   onDetach(item) {
     item.close();
@@ -58,58 +45,36 @@ export class LightComponent {
   }
 
   /** Todo:
-   * - Change Name
+   * - Change Name (emit onNameChange(newName))
    * - ...
    *
    * */
   async onConfig(item) {
     item.close();
-    const actionSheet = await this.actionSheetController.create({
-      header: 'Albums',
-      buttons: [{
-        text: 'Delete',
-        role: 'destructive',
-        icon: 'trash',
-        handler: () => {
-          console.log('Delete clicked');
-        }
-      }, {
-        text: 'Share',
-        icon: 'share',
-        handler: () => {
-          console.log('Share clicked');
-        }
-      }, {
-        text: 'Play (open modal)',
-        icon: 'arrow-dropright-circle',
-        handler: () => {
-          console.log('Play clicked');
-        }
-      }, {
-        text: 'Favorite',
-        icon: 'heart',
-        handler: () => {
-          console.log('Favorite clicked');
-        }
-      }, {
-        text: 'Cancel',
-        icon: 'close',
-        role: 'cancel',
-        handler: () => {
-          console.log('Cancel clicked');
-        }
-      }]
+    console.log(this._device);
+    // ModalComponent needs a module and this needs to be known by LightComponents Module
+    const modal = await this.modalController.create({
+      component: DeviceConfigComponent,
+      componentProps: {
+        'device': this._device,
+        'change': this.onDefaultChange
+      }
     });
-    await actionSheet.present();
+    return await modal.present();
   }
 
-  onStateChange(event) {
+  onDefaultChange = (event) => {
+    console.log(event);
+    this.lightsService.emit("store", this._device, event);
+  }
+
+  onStateChange = (event) => {
     // console.log(event);
     this._device.on_state = event.detail.checked;
     this.lightsService.emit("change", this._device, ["on_state"]);
   }
 
-  onBrightnessChange(event) {
+  onBrightnessChange = (event) => {
     // console.log(event);
     this._device.brightness = event;//event.detail.value;
     if (this._device.brightness > 0)

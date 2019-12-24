@@ -1,4 +1,5 @@
 import { Component, AfterViewInit } from '@angular/core';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab1',
@@ -10,7 +11,9 @@ import { Component, AfterViewInit } from '@angular/core';
 export class Tab1Page implements AfterViewInit {
 
 
-  constructor() {
+  constructor(
+    private navCtrl: NavController
+  ) {
 
   }
 

@@ -7,23 +7,21 @@
 
     <ion-item [disabled]="disabled" class="item">
         <ion-reorder slot="start">
-                <ion-icon name="reorder"></ion-icon>
+            <ion-icon name="reorder"></ion-icon>
         </ion-reorder>
         <div class="content">
 
             <ion-item lines="none">
-
-                <ion-label><b>{{_device.name}}</b></ion-label>
-                <!--<ion-label slot="end">
-                        {{device.on_state ? "On" : "Off"}}
-                    </ion-label>-->
                 <ion-toggle slot="start" disabled="{{_device.brightness ? false : true}}" [(ngModel)]="_device.on_state"
                     (ionChange)="onStateChange($event)"></ion-toggle>
+                    <ion-label (ngModelChange)="onNameChange($event)"><b>{{_device.name}}</b></ion-label>
+                <ion-icon slot="end" name="wifi"></ion-icon>
             </ion-item>
 
             <ion-item lines="none">
-                <ion-range debounce="20" [(ngModel)]="_device.brightness" color="{{_device.on_state ? 'primary' : 'medium'}}"
-                    pin="true" (ngModelChange)="onBrightnessChange($event)">
+                <ion-range debounce="20" [(ngModel)]="_device.brightness"
+                    color="{{_device.on_state ? 'primary' : 'medium'}}" pin="true"
+                    (ngModelChange)="onBrightnessChange($event)">
                     <ion-icon slot="start" color="medium" size="small" name="sunny"></ion-icon>
                     <ion-icon slot="end" name="sunny"></ion-icon>
                 </ion-range>

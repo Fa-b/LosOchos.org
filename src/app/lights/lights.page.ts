@@ -1,5 +1,5 @@
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
-import { IonReorderGroup } from '@ionic/angular';
+import { IonReorderGroup, NavController } from '@ionic/angular';
 import { LightsService } from '../lights.service';
 
 @Component({
@@ -10,7 +10,10 @@ import { LightsService } from '../lights.service';
 export class LightsPage implements AfterViewInit {
   refreshing: boolean = false;
   @ViewChild(IonReorderGroup, {static: true}) reorderGroup: IonReorderGroup;
-  constructor(private lightsService: LightsService) {
+  constructor(
+    private navCtrl: NavController,
+    private lightsService: LightsService
+    ) {
 
   }
 
@@ -75,17 +78,4 @@ export class LightsPage implements AfterViewInit {
   onAttach() {
     this.lightsService.debugAttach();
   }
-
-  // onDetach(device) {
-  //   this.lightsService.deviceManager.debugCommandDetach(device);
-  // }
-
-  // onStateChange(device) {
-  //   this.deviceManager.set(device, { on_state: device.on_state });
-  // }
-
-  // onBrightnessChange(device) {
-  //   this.deviceManager.set(device, { brightness: device.brightness });
-  // }
-
 }

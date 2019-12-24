@@ -35,10 +35,16 @@ export class DeviceManagerService {
                   (data) => {
                     // console.log(data);
                     // received publish, have to route the correct type to create instance!
+                    // Todo: find a way to instantiate a BaseDevice and let subscribers overwrite that
                     if (data.hasOwnProperty("payload") && data.payload.type === "Light" ) {
                       // Add new LightDevice to dictionary
                       this.deviceDict[data.id] = new LightDevice();
                       this.deviceDict[data.id].updateState(data.payload);
+                      // Get Default settings:
+                      this.socket.send("read_eeprom", {
+                        id: data.id,
+                        payload: undefined
+                      });
                       // Notify subscribers only once!
                       observer.next(this.deviceDict[data.id]);
                     }
@@ -98,6 +104,40 @@ export class DeviceManagerService {
             console.warn('Unsubscribed from device set response', Date.now());
           }
         );
+        this.socket.get('eeprom_write')
+        .subscribe(
+          (data) => {
+            if (data.hasOwnProperty("id") && data.hasOwnProperty("payload")) {
+              // If valid: notify subscribers
+              // this.deviceDict[data.id] = <T>this.deviceDict[data.id];
+              this.deviceDict[data.id].updateDefaults(data.payload);
+              observer.next(this.deviceDict[data.id]);
+            }
+          },
+          (err) => {
+            console.error('Error during device write eeprom response: ', err, Date.now());
+          },
+          () => {
+            console.warn('Unsubscribed from device write eeprom response', Date.now());
+          }
+        );
+        this.socket.get('eeprom_read')
+        .subscribe(
+          (data) => {
+            if (data.hasOwnProperty("id") && data.hasOwnProperty("payload")) {
+              // If valid: notify subscribers
+              // this.deviceDict[data.id] = <T>this.deviceDict[data.id];
+              this.deviceDict[data.id].updateDefaults(data.payload);
+              observer.next(this.deviceDict[data.id]);
+            }
+          },
+          (err) => {
+            console.error('Error during device read eeprom response: ', err, Date.now());
+          },
+          () => {
+            console.warn('Unsubscribed from device read eeprom response', Date.now());
+          }
+        );
     });
   }
 
@@ -109,8 +149,11 @@ export class DeviceManagerService {
             if (data.hasOwnProperty("id")) {
               let device = this.deviceDict[data.id];
               delete this.deviceDict[data.id];
-              // Notify subscribers
-              observer.next(device);
+              // If we have a instance of this device
+              if(device) {
+                // Notify subscribers
+                observer.next(device);
+              }
             }
           },
           (err) => {
@@ -166,6 +209,16 @@ export class DeviceManagerService {
     }
   }
 
+  get(device, data) {
+    let id = Object.keys(this.deviceDict).find(element => this.deviceDict[element] === device);
+    if (id) {
+      this.socket.send("get", {
+        id: id,
+        payload: data
+      });
+    }
+  }
+
   set(device, data) {
     let id = Object.keys(this.deviceDict).find(element => this.deviceDict[element] === device);
     if (id) {
@@ -176,10 +229,10 @@ export class DeviceManagerService {
     }
   }
 
-  get(device, data) {
+  write_eeprom(device, data) {
     let id = Object.keys(this.deviceDict).find(element => this.deviceDict[element] === device);
     if (id) {
-      this.socket.send("get", {
+      this.socket.send("write_eeprom", {
         id: id,
         payload: data
       });

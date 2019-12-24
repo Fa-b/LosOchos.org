@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar>
+
+    <ion-buttons slot="secondary">
+      <ion-button color="primary" (click)="onDismiss()">
+        <ion-icon slot="start" name="arrow-back"></ion-icon>
+        Back
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{title}}</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button color="primary" (click)="onConfirm()">
+        Confirm
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-input [(ngModel)]="this.text" placeholder="Enter Text"></ion-input>
+  <ion-icon slot="end" name="close-circle-outline"></ion-icon>
+</ion-content>
