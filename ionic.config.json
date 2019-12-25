@@ -1,5 +1,7 @@
 {
   "name": "LosOchos.org",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

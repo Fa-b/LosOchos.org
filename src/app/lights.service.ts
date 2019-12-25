@@ -23,7 +23,7 @@ export class LightsService {
 
     this.deviceManager.on('lightResponse', (device) => {
       // Received response
-      console.log(device);
+      // console.log(device);
     });
 
     this.deviceManager.on('lightDetach', (device) => {

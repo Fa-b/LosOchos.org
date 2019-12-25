@@ -8,8 +8,8 @@ import { NavController } from '@ionic/angular';
   styleUrls: ['tab3.page.scss']
 })
 export class Tab3Page implements AfterViewInit {
-  private address: string;
-  private port: string;
+  public address: string;
+  public port: string;
 
   constructor(
     private navCtrl: NavController,

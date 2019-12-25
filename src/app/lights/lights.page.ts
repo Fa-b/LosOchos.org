@@ -12,7 +12,7 @@ export class LightsPage implements AfterViewInit {
   @ViewChild(IonReorderGroup, {static: true}) reorderGroup: IonReorderGroup;
   constructor(
     private navCtrl: NavController,
-    private lightsService: LightsService
+    public lightsService: LightsService
     ) {
 
   }

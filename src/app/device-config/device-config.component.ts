@@ -9,7 +9,7 @@ import { TextChangeComponent } from '../text-change/text-change.component';
   styleUrls: ['./device-config.component.scss'],
 })
 export class DeviceConfigComponent implements OnInit {
-  private device: LightDevice;
+  public device: LightDevice;
   private change: (string) => void;
   // @Input()
   // get device() {
@@ -29,13 +29,11 @@ export class DeviceConfigComponent implements OnInit {
   ngOnInit() { }
 
   onConfirm() {
-    
     let retVal = [];
 
-    if(this.device.brightness != this.device.defaults.brightness)
-      retVal.push("brightness");
-    if(this.device.on_state != this.device.defaults.on_state)
-      retVal.push("on_state");
+    for(let property in this.device.defaults)
+      if(this.device.defaults[property] != this.device[property])
+        retVal.push(property);
     this.change(retVal);
     this.modalController.dismiss({
       'dismissed': true

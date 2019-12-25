@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { LightsService } from '../lights.service';
 import { LightDevice } from '../devices';
 import { ModalController } from '@ionic/angular';
@@ -12,7 +12,7 @@ import { DeviceConfigComponent } from '../device-config/device-config.component'
   styleUrls: ['./light.component.scss'],
 })
 export class LightComponent {
-  private _device: LightDevice;
+  public _device: LightDevice;
 
   // private changeCallback: (data: any) => void = () => {};
   @Input()
@@ -64,8 +64,8 @@ export class LightComponent {
   }
 
   onDefaultChange = (event) => {
-    console.log(event);
-    this.lightsService.emit("store", this._device, event);
+    if(event.length != 0)
+      this.lightsService.emit("store", this._device, event);
   }
 
   onStateChange = (event) => {

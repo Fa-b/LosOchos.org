@@ -7,7 +7,8 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./text-change.component.scss'],
 })
 export class TextChangeComponent implements OnInit {
-  private text: string;
+  public text: string;
+  public title: string;
   // @Input()
   // get text() {
   //   return this._text;
