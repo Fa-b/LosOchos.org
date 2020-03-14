@@ -26,6 +26,7 @@
     "@ionic/storage": "^2.2.0",
     "@types/socket.io": "^2.1.4",
     "@types/socket.io-client": "^1.4.32",
+    "cordova-android": "7.1.4",
     "cordova-browser": "^5.0.4",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
@@ -80,7 +81,8 @@
       "cordova-plugin-ionic-keyboard": {}
     },
     "platforms": [
-      "browser"
+      "browser",
+      "android"
     ]
   }
 }

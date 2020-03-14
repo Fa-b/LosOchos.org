@@ -69,13 +69,13 @@ export class LightComponent {
   }
 
   onStateChange = (event) => {
-    // console.log(event);
+    console.log(event);
     this._device.on_state = event.detail.checked;
-    this.lightsService.emit("change", this._device, ["on_state"]);
+  this.lightsService.emit("change", this._device, ["on_state"]);
   }
 
   onBrightnessChange = (event) => {
-    // console.log(event);
+    console.log(event);
     this._device.brightness = event;//event.detail.value;
     if (this._device.brightness > 0)
       this.device.on_state = true;

@@ -13,7 +13,7 @@
 
             <ion-item lines="none">
                 <ion-toggle slot="start" disabled="{{_device.brightness ? false : true}}" [(ngModel)]="_device.on_state"
-                    (ionChange)="onStateChange($event)"></ion-toggle>
+                (ngModelChange)="onStateChange($event)"></ion-toggle>
                     <ion-label><b>{{_device.name}}</b></ion-label>
                 <ion-icon slot="end" name="wifi"></ion-icon>
             </ion-item>

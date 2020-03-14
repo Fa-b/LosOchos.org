@@ -26,36 +26,38 @@ export class DeviceManagerService {
         .subscribe(
           (data) => {
             if (data.hasOwnProperty("id")) {
-              // Add new Device with empty type to dictionary
-              // this.deviceDict[data.id] = new BaseDevice();//"";//data.type;
-              console.log('Subscribed for device publish on id: ', data.id);
-              // Only take 'publish when id matches and also only take it once!
-              this.socket.get('publish').pipe(filter(msg => msg.id === data.id), first())
-                .subscribe(
-                  (data) => {
-                    // console.log(data);
-                    // received publish, have to route the correct type to create instance!
-                    // Todo: find a way to instantiate a BaseDevice and let subscribers overwrite that
-                    if (data.hasOwnProperty("payload") && data.payload.type === "Light" ) {
-                      // Add new LightDevice to dictionary
-                      this.deviceDict[data.id] = new LightDevice();
-                      this.deviceDict[data.id].updateState(data.payload);
-                      // Get Default settings:
-                      this.socket.send("read_eeprom", {
-                        id: data.id,
-                        payload: undefined
-                      });
-                      // Notify subscribers only once!
-                      observer.next(this.deviceDict[data.id]);
+              if (this.deviceDict[data.id] === undefined) {
+                // Add new Device with empty type to dictionary
+                // this.deviceDict[data.id] = new BaseDevice();//"";//data.type;
+                console.log('Subscribed for device publish on id: ', data.id);
+                // Only take 'publish when id matches and also only take it once!
+                this.socket.get('publish').pipe(filter(msg => msg.id === data.id), first())
+                  .subscribe(
+                    (data) => {
+                      // console.log(data);
+                      // received publish, have to route the correct type to create instance!
+                      // Todo: find a way to instantiate a BaseDevice and let subscribers overwrite that
+                      if (data.hasOwnProperty("payload") && data.payload.type === "Light") {
+                        // Add new LightDevice to dictionary
+                        this.deviceDict[data.id] = new LightDevice();
+                        this.deviceDict[data.id].updateState(data.payload);
+                        // Get Default settings:
+                        this.socket.send("read_eeprom", {
+                          id: data.id,
+                          payload: undefined
+                        });
+                        // Notify subscribers only once!
+                        observer.next(this.deviceDict[data.id]);
+                      }
+                    },
+                    (err) => {
+                      console.error('Error during device publish: ', err, Date.now());
+                    },
+                    () => {
+                      console.warn('Unsubscribed from device publish', Date.now());
                     }
-                  },
-                  (err) => {
-                    console.error('Error during device publish: ', err, Date.now());
-                  },
-                  () => {
-                    console.warn('Unsubscribed from device publish', Date.now());
-                  }
-                );
+                  );
+              }
             }
           },
           (err) => {
@@ -87,7 +89,7 @@ export class DeviceManagerService {
             console.warn('Unsubscribed from device set response', Date.now());
           }
         );
-        this.socket.get('get')
+      this.socket.get('get')
         .subscribe(
           (data) => {
             if (data.hasOwnProperty("id") && data.hasOwnProperty("payload")) {
@@ -104,7 +106,7 @@ export class DeviceManagerService {
             console.warn('Unsubscribed from device set response', Date.now());
           }
         );
-        this.socket.get('eeprom_write')
+      this.socket.get('eeprom_write')
         .subscribe(
           (data) => {
             if (data.hasOwnProperty("id") && data.hasOwnProperty("payload")) {
@@ -121,7 +123,7 @@ export class DeviceManagerService {
             console.warn('Unsubscribed from device write eeprom response', Date.now());
           }
         );
-        this.socket.get('eeprom_read')
+      this.socket.get('eeprom_read')
         .subscribe(
           (data) => {
             if (data.hasOwnProperty("id") && data.hasOwnProperty("payload")) {
@@ -150,7 +152,7 @@ export class DeviceManagerService {
               let device = this.deviceDict[data.id];
               delete this.deviceDict[data.id];
               // If we have a instance of this device
-              if(device) {
+              if (device) {
                 // Notify subscribers
                 observer.next(device);
               }
@@ -173,7 +175,7 @@ export class DeviceManagerService {
           (device) => {
             if (device.type === "Light") {
               console.log("LightDevice attached");
-              
+
               listener(device);
             }
           },
@@ -185,9 +187,9 @@ export class DeviceManagerService {
       this.deviceResponse()
         .subscribe(
           (device) => {
-              console.log("LightDevice response");
-              // console.log(device);
-              listener(device);
+            console.log("LightDevice response");
+            // console.log(device);
+            listener(device);
           },
           () => {
             console.warn('Unsubscribed from LightDevice response', Date.now());
@@ -244,31 +246,31 @@ export class DeviceManagerService {
 
     return new Observable((observer) => {
       this.socket.get('get')
-      .subscribe(
-        (data) => {
-        if (data.hasOwnProperty("id")) {
-          // We only keep devices that we will have to kill from gui
-          delete refreshList[data.id];
-        }
-  
-        // If this is the case, all our ids responded :)
-        if(Object.keys(refreshList).length === 0) {
-          observer.complete();
-        }
-      });
-  
+        .subscribe(
+          (data) => {
+            if (data.hasOwnProperty("id")) {
+              // We only keep devices that we will have to kill from gui
+              delete refreshList[data.id];
+            }
+
+            // If this is the case, all our ids responded :)
+            if (Object.keys(refreshList).length === 0) {
+              observer.complete();
+            }
+          });
+
       // request a get package for all devices and all properties on them
-      for(let id in this.deviceDict) {
+      for (let id in this.deviceDict) {
         refreshList[id] = this.deviceDict[id];
         this.get(this.deviceDict[id], this.deviceDict[id]);
       }
-  
-  
+
+
       setTimeout(() => {
         // OK, some of our devices are not responding,
         // so we should clear them from our list!
-        for(let id in refreshList) {
-          if(this.deviceDict[id]) {
+        for (let id in refreshList) {
+          if (this.deviceDict[id]) {
             // start removing them here:
             delete this.deviceDict[id];
             // Then send its residing instance to subscriber
@@ -276,7 +278,7 @@ export class DeviceManagerService {
           } else {
             delete refreshList[id];
             console.log("Oops, detached itself :-)");
-          } 
+          }
         }
         // Then complete
         observer.complete();
